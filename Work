@@ -1,60 +1,25 @@
 -- Variables for the Huge Valentine's Bear model and hatching status
 local eggHatched = false -- Whether the egg has been hatched or not
-local hugeValentineBearSize = Vector3.new(5, 10, 5) -- Size of the Huge Valentine's Bear model
-local bearPositionOffset = Vector3.new(5, 5, 0) -- Position offset for the bear (relative to player)
 local player = game.Players.LocalPlayer -- Get the local player
+local character = player.Character or player.CharacterAdded:Wait()
 
 -- Function to simulate hatching the egg and show the Huge Valentine's Bear
 local function hatchEgg()
     if not eggHatched then
         eggHatched = true
         
-        -- Create the Huge Valentine's Bear model directly in the game
-        local hugeValentineBear = Instance.new("Model")
-        hugeValentineBear.Name = "Huge Valentine's Bear"
+        -- Load the Huge Valentine's Bear model from Roblox (make sure it exists in ReplicatedStorage)
+        local hugeValentineBearModel = game.ReplicatedStorage:WaitForChild("HugeValentinesBear") -- Make sure the model is in ReplicatedStorage
         
-        -- Create a simple part to represent the Huge Valentine's Bear (you can add more parts for details)
-        local bearBody = Instance.new("Part")
-        bearBody.Name = "Body"
-        bearBody.Size = hugeValentineBearSize
-        bearBody.Position = player.Character.HumanoidRootPart.Position + bearPositionOffset  -- Position relative to the player
-        bearBody.Anchored = true
-        bearBody.CanCollide = false
-        bearBody.BrickColor = BrickColor.new("Bright red") -- Customize the color of the body
-        bearBody.Parent = hugeValentineBear
-
-        -- Add a head to the bear for more details
-        local bearHead = Instance.new("Part")
-        bearHead.Name = "Head"
-        bearHead.Size = Vector3.new(4, 4, 4)
-        bearHead.Position = bearBody.Position + Vector3.new(0, 6, 0)  -- Positioned above the body
-        bearHead.Anchored = true
-        bearHead.CanCollide = false
-        bearHead.BrickColor = BrickColor.new("Bright pink") -- Customize color for the head
-        bearHead.Parent = hugeValentineBear
-
-        -- Parent the model to the workspace to make it visible in the game world
-        hugeValentineBear.Parent = game.Workspace
+        -- Clone the Huge Valentine's Bear model
+        local hugeValentineBearClone = hugeValentineBearModel:Clone()
         
-        -- Display message to player
-        print("You hatched the Huge Valentine's Bear!")
-    else
-        print("The egg has already been hatched!")
-    end
-end
-
--- Function to handle touch input (for mobile compatibility)
-local function onTouchInput()
-    hatchEgg() -- Trigger egg hatching and showing the visual
-end
-
--- Check if the game is being played on mobile and listen for touch input
-if game:GetService("UserInputService").TouchEnabled then
-    -- For mobile (Touch)
-    game:GetService("UserInputService").TouchEnded:Connect(function(input)
-        onTouchInput() -- Trigger egg hatching on touch input
-    end)
-end
-
--- Trigger the hatching immediately on script execution for testing purposes (can be commented out)
-onTouchInput()  -- Uncomment this if you want it to hatch immediately when the script runs
+        -- Position the bear near the player
+        hugeValentineBearClone:SetPrimaryPartCFrame(character.HumanoidRootPart.CFrame + Vector3.new(5, 0, 0)) -- Position the bear relative to the player
+        
+        -- Set up the bear to follow the player
+        local bodyPosition = Instance.new("BodyPosition")
+        bodyPosition.MaxForce = Vector3.new(10000, 10000, 10000)
+        bodyPosition.D = 1000
+        bodyPosition.P = 10000
+        body
